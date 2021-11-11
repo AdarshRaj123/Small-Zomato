@@ -6,9 +6,12 @@ import (
 )
 
 func adminRoutes(r chi.Router) {
-	r.Group(func(user chi.Router) {
-		user.Get("/info", handlers.GetUserInfo)
-		user.Delete("/logout", handlers.Logout)
-		user.Post("/add-restaurant",handlers.AddRestaurant)
+	r.Group(func(admin chi.Router) {
+		admin.Get("/info", handlers.GetUserInfo)
+		admin.Delete("/logout", handlers.Logout)
+		admin.Post("/add-restaurant",handlers.AddRestaurant)
+		admin.Post("/add-dish",handlers.AddDish)
+		admin.Get("/get-all",handlers.GetAll)
+		admin.Get("/get-dish",handlers.GetDish)
 	})
 }

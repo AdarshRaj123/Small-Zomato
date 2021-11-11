@@ -29,3 +29,24 @@ func AddRestaurant(w http.ResponseWriter, r *http.Request){
 
 
 }
+func AddDish(w http.ResponseWriter, r *http.Request){
+	body := struct{
+		Name string `json:"name"`
+		 ID  string `json:"res_id"`
+
+	}{}
+
+	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {
+		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
+		return
+	}
+	res,err:= dbhelper.AddDishToRes(body.Name,body.ID)
+	if err!=nil{
+		fmt.Println(err)
+		utils.RespondJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+	utils.RespondJSON(w,http.StatusOK,res)
+
+
+}

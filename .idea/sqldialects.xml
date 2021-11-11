@@ -4,6 +4,6 @@
     <file url="file://$PROJECT_DIR$/database/migrations/0001_initial.up.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/database/migrations/0002_initial.up.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/database/migrations/0003_initialfix.up.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/database/migrations/0004_initial.up.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/database/migrations/0004_initial.up.sql" dialect="PostgreSQL" />
   </component>
 </project>

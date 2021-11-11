@@ -142,4 +142,33 @@ func AddAddress(w http.ResponseWriter, r *http.Request) {
 	utils.RespondJSON(w, http.StatusCreated, res)
 
 }
+func GetAll(w http.ResponseWriter, r *http.Request){
+	res ,err:= dbhelper.GetAllRestaurant()
+	if err != nil {
+
+		utils.RespondJSON(w, http.StatusOK, res)
+
+	}
+	utils.RespondJSON(w, http.StatusCreated, res)
+
+}
+func GetDish(w http.ResponseWriter, r *http.Request){
+	body := struct{
+		ID string `json:"name"`
+	}{}
+	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {
+		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
+		return
+	}
+	res,err := dbhelper.GetRestaurantDish(body.ID)
+	if err != nil {
+
+		utils.RespondJSON(w, http.StatusOK, res)
+
+	}
+	utils.RespondJSON(w, http.StatusCreated, res)
+
+
+
+}
 

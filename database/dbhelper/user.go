@@ -133,3 +133,24 @@ func AddAuthUserAddress(userID,latitude,longitude string)(map[string]string,erro
 	return res,nil
 
 }
+func GetAllRestaurant()([]models.Restaurant,error){
+	SQL := `SELECT name,latitude,longitude from restaurants`
+	res :=make([]models.Restaurant,0)
+	err := database.SmallZomato.Get(&res,SQL)
+	if err!=nil{
+		return nil,err
+	}
+	return res,nil
+
+}
+func GetRestaurantDish(id string)([]models.Dish,error){
+	SQL := `SELECT v.name FROM dishes AS v INNERJOIN restaurants as r ON v.res_id=r.id WHERE r.id =&1`
+	res := make([]models.Dish,0)
+	err:=database.SmallZomato.Get(&res,SQL,id)
+	if err!=nil{
+		return nil,err
+	}
+	return res,nil
+
+
+}
