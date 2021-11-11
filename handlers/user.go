@@ -139,7 +139,7 @@ func AddAddress(w http.ResponseWriter, r *http.Request) {
 		utils.RespondJSON(w, http.StatusOK, res)
 
 	}
-	utils.RespondJSON(w, http.StatusOK, res)
+	utils.RespondJSON(w, http.StatusCreated, res)
 
 }
 

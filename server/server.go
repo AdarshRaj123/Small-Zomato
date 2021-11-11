@@ -41,6 +41,10 @@ func SetupRoutes() *Server {
 			user.Use(middlewares.AuthMiddleware)
 			user.Group(userRoutes)
 		})
+		v1.Route("/admin", func(admin chi.Router) {
+			admin.Use(middlewares.AuthMiddleware)
+			admin.Group(adminRoutes)
+		})
 
 
 	})
