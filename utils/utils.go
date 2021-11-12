@@ -1,14 +1,17 @@
 package utils
 
 import (
+	"SmallZomato/models"
 	"crypto/rand"
 	"crypto/sha512"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
 	"math/big"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -163,5 +166,25 @@ func TrimStringAfter(s, delim string) string {
 		return s[:idx]
 	}
 	return s
+}
+func GetDistanceFromLat(location models.Location,latitude string,longitude string)float64{
+	var R = float64(6371) // Radius of the earth in km
+	l1, _ := strconv.ParseFloat(latitude, 8)
+	lo1,_:=strconv.ParseFloat(longitude, 8)
+	l2,_:=strconv.ParseFloat(location.Latitude, 8)
+	lo2,_:=strconv.ParseFloat(location.Longitude,8)
+	var dLat = deg2rad(l2-l1) // deg2rad below
+	var dLon = deg2rad(lo2-lo1)
+	var a =
+		math.Sin(dLat/2) * math.Sin(dLat/2) +
+			math.Cos(deg2rad(l1)) * math.Cos(deg2rad(l2)) *
+				math.Sin(dLon/2) * math.Sin(dLon/2)
+
+	var c = 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+	var d = R * c // Distance in km
+	return d
+}
+func deg2rad(deg float64)float64 {
+return deg * (math.Pi/180)
 }
 

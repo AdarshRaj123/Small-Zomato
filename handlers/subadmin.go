@@ -3,7 +3,6 @@ package handlers
 import (
 	"SmallZomato/database"
 	"SmallZomato/database/dbhelper"
-	"SmallZomato/middlewares"
 	"SmallZomato/models"
 	"SmallZomato/utils"
 	"fmt"
@@ -11,7 +10,7 @@ import (
 	"net/http"
 )
 
-func AddRestaurant(w http.ResponseWriter, r *http.Request){
+func AddSubAdminRestaurant(w http.ResponseWriter, r *http.Request){
 
 	body := struct{
 		Name string `json:"name"`
@@ -23,28 +22,7 @@ func AddRestaurant(w http.ResponseWriter, r *http.Request){
 		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
 		return
 	}
-	  res,err:= dbhelper.RestaurantAdd(body.Name,body.Latitude,body.Longitude)
-	  if err!=nil{
-		  fmt.Println(err)
-		  utils.RespondJSON(w, http.StatusInternalServerError, err)
-		  return
-	  }
-	utils.RespondJSON(w,http.StatusOK,res)
-
-
-}
-func AddDish(w http.ResponseWriter, r *http.Request){
-	body := struct{
-		Name string `json:"name"`
-		 ID  string `json:"res_id"`
-
-	}{}
-
-	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {
-		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
-		return
-	}
-	res,err:= dbhelper.AddDishToRes(body.Name,body.ID)
+	res,err:= dbhelper.SubAdminRestaurantAdd(body.Name,body.Latitude,body.Longitude)
 	if err!=nil{
 		fmt.Println(err)
 		utils.RespondJSON(w, http.StatusInternalServerError, err)
@@ -54,17 +32,28 @@ func AddDish(w http.ResponseWriter, r *http.Request){
 
 
 }
-func GetUsers(w http.ResponseWriter, r *http.Request){
-	 res,err := dbhelper.GetAllUser()
+func AddSubAdminDish(w http.ResponseWriter, r *http.Request){
+	body := struct{
+		Name string `json:"name"`
+		ID  string `json:"res_id"`
 
+	}{}
+
+	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {
+		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
+		return
+	}
+	res,err:= dbhelper.AddSubAdminDishToRes(body.Name,body.ID)
 	if err!=nil{
-
+		fmt.Println(err)
 		utils.RespondJSON(w, http.StatusInternalServerError, err)
 		return
 	}
 	utils.RespondJSON(w,http.StatusOK,res)
+
+
 }
-func AddUser(w http.ResponseWriter, r *http.Request){
+func AddSubAdminUser(w http.ResponseWriter, r *http.Request){
 	body := struct {
 		Name     string      `json:"name"`
 		Email    string      `json:"email"`
@@ -102,7 +91,7 @@ func AddUser(w http.ResponseWriter, r *http.Request){
 	}
 
 	txErr := database.Tx(func(tx *sqlx.Tx) error {
-		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword,"admin")
+		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword,"subadmin")
 		if saveErr != nil {
 			return saveErr
 		}
@@ -128,21 +117,22 @@ func AddUser(w http.ResponseWriter, r *http.Request){
 		message: "user created",
 	})
 }
-func GetDistance(w http.ResponseWriter, r *http.Request){
-	userCtx := middlewares.UserContext(r)
-	body := struct {
+func GetSubAdminUsers(	w http.ResponseWriter, r *http.Request){
+	res,err := dbhelper.GetUser()
+	if err!=nil{
 
-		Latitude string     `json:"latitude"`
-		Longitude string     `json:"longitude"`
-
-	}{}
-	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {
-		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
+		utils.RespondJSON(w, http.StatusInternalServerError, err)
 		return
 	}
-	res:= dbhelper.CalculateDistance(userCtx.ID,body.Latitude,body.Longitude)
-	jdata := make(map[string]float64)
-	jdata["distance"]=res
-	utils.RespondJSON(w,http.StatusOK,jdata)
+	utils.RespondJSON(w,http.StatusOK,res)
+}
+func GetSubAdminRestaurant(w http.ResponseWriter, r *http.Request){
+	res,err := dbhelper.GetRetaurant()
+	if err!=nil{
+
+		utils.RespondJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+	utils.RespondJSON(w,http.StatusOK,res)
 
 }

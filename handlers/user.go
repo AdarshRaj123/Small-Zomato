@@ -50,7 +50,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionToken := utils.HashString(body.Email + time.Now().String())
 	txErr := database.Tx(func(tx *sqlx.Tx) error {
-		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword)
+		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword,body.Role)
 		if saveErr != nil {
 			return saveErr
 		}
@@ -136,7 +136,7 @@ func AddAddress(w http.ResponseWriter, r *http.Request) {
 	res,err := dbhelper.AddAuthUserAddress(userCtx.ID, body.Longitude,body.Longitude)
 	if err != nil {
 
-		utils.RespondJSON(w, http.StatusOK, res)
+		utils.RespondJSON(w, http.StatusInternalServerError, res)
 
 	}
 	utils.RespondJSON(w, http.StatusCreated, res)

@@ -12,6 +12,7 @@ func userRoutes(r chi.Router) {
 		user.Post("/add-address",handlers.AddAddress)
 		user.Get("/get-all",handlers.GetAll)
 		user.Get("/get-dish",handlers.GetDish)
-		 user.Get("/get-all",handlers.GetAll)
+		user.Post("/get-distance",handlers.GetDistance)
+
 	})
 }

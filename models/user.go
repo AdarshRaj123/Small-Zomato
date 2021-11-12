@@ -28,10 +28,20 @@ type UserRole struct {
 	CreatedAt time.Time `json:"createdAt" db:"created_at"`
 }
 type Restaurant struct{
-	Name  string `json:"name db:"name"`
+	Name  string `json:"name" db:"name"`
 	Latitude string `json:"latitude" db:"latitude"`
 	Longitude string `json:"longitude" db:"longitude"`
 }
 type Dish struct {
-	ID string `json:"name" db:"name"`
+	Name string `json:"name" db:"name"`
+}
+type UserDetail struct{
+	Name string `json:"name" db:"name"`
+	Email string `json:"email" db:"email"`
+	CreatedAt string `json:"created_at" db:"created_at"`
+
+}
+type Location struct{
+	Latitude string `json:"latitude" db:"latitude"`
+	Longitude string `json:"longitude" db:"longitude"`
 }

@@ -11,7 +11,10 @@ func adminRoutes(r chi.Router) {
 		admin.Delete("/logout", handlers.Logout)
 		admin.Post("/add-restaurant",handlers.AddRestaurant)
 		admin.Post("/add-dish",handlers.AddDish)
+		admin.Post("/add-user",handlers.AddUser)
+		admin.Get("/get-users",handlers.GetUsers)
 		admin.Get("/get-all",handlers.GetAll)
-		admin.Get("/get-dish",handlers.GetDish)
+		admin.Post("/get-dish",handlers.GetDish)
+		admin.Post("/get-distance",handlers.GetDistance)
 	})
 }

@@ -45,6 +45,10 @@ func SetupRoutes() *Server {
 			admin.Use(middlewares.AuthMiddleware)
 			admin.Group(adminRoutes)
 		})
+		v1.Route("/subadmain",func(subadmin chi.Router){
+			 subadmin.Use(middlewares.AuthMiddleware)
+			 subadmin.Group(subadminroutes)
+		})
 
 
 	})

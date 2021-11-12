@@ -36,11 +36,11 @@ func GetUserRoles(userID string) ([]models.UserRole, error) {
 	err := database.SmallZomato.Select(&roles, SQL, userID)
 	return roles, err
 }
-func CreateUser(db sqlx.Ext, name, email, password string) (string, error) {
+func CreateUser(db sqlx.Ext, name string, email string, password string,created models.Role) (string, error) {
 	// language=SQL
-	SQL := `INSERT INTO user_profile(name, email, password) VALUES ($1, TRIM(LOWER($2)), $3) RETURNING id`
+	SQL := `INSERT INTO user_profile(name, email, password,created_by) VALUES ($1, TRIM(LOWER($2)), $3,$4) RETURNING id`
 	var userID string
-	if err := db.QueryRowx(SQL, name, email, password).Scan(&userID); err != nil {
+	if err := db.QueryRowx(SQL, name, email, password,created).Scan(&userID); err != nil {
 		return "", err
 	}
 	return userID, nil
@@ -136,7 +136,9 @@ func AddAuthUserAddress(userID,latitude,longitude string)(map[string]string,erro
 func GetAllRestaurant()([]models.Restaurant,error){
 	SQL := `SELECT name,latitude,longitude from restaurants`
 	res :=make([]models.Restaurant,0)
-	err := database.SmallZomato.Get(&res,SQL)
+
+	err := database.SmallZomato.Select(&res,SQL)
+	fmt.Println(res)
 	if err!=nil{
 		return nil,err
 	}
@@ -144,10 +146,11 @@ func GetAllRestaurant()([]models.Restaurant,error){
 
 }
 func GetRestaurantDish(id string)([]models.Dish,error){
-	SQL := `SELECT v.name FROM dishes AS v INNERJOIN restaurants as r ON v.res_id=r.id WHERE r.id =&1`
+	SQL := `SELECT v.name FROM dishes AS v INNER JOIN restaurants as r ON v.res_id=r.id WHERE r.id =$1`
 	res := make([]models.Dish,0)
-	err:=database.SmallZomato.Get(&res,SQL,id)
+	err:=database.SmallZomato.Select(&res,SQL,id)
 	if err!=nil{
+		fmt.Println(err)
 		return nil,err
 	}
 	return res,nil
