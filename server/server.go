@@ -39,15 +39,19 @@ func SetupRoutes() *Server {
 		})
 		v1.Route("/user", func(user chi.Router) {
 			user.Use(middlewares.AuthMiddleware)
+			user.Use(middlewares.UserCheck())
 			user.Group(userRoutes)
 		})
 		v1.Route("/admin", func(admin chi.Router) {
 			admin.Use(middlewares.AuthMiddleware)
+			admin.Use(middlewares.AdminCheck())
 			admin.Group(adminRoutes)
 		})
 		v1.Route("/subadmain",func(subadmin chi.Router){
 			 subadmin.Use(middlewares.AuthMiddleware)
-			 subadmin.Group(subadminroutes)
+			 //todo: asubadmin middlewarer
+			subadmin.Use(middlewares.SubAdminCheck())
+		 	subadmin.Group(subadminroutes)
 		})
 
 

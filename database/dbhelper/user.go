@@ -16,7 +16,13 @@ func DeleteSessionToken(userID, token string) error {
 }
 func IsUserExists(role models.Role,email string) (bool, error) {
 	// language=SQL
-	SQL := `SELECT u.id FROM user_profile AS u INNER JOIN user_roles AS v ON u.id = v.user_id  WHERE v.role =$1 AND u.email= $2 AND u.archived_at IS NULL`
+	SQL := `SELECT u.id 
+			FROM user_profile AS u 
+			INNER JOIN user_roles AS v ON u.id = v.user_id  
+			WHERE v.role =$1 AND 
+			u.email= $2 AND 
+			u.archived_at IS NULL`
+
 	var id string
 	err := database.SmallZomato.Get(&id, SQL, role,email)
 	if err != nil && err != sql.ErrNoRows {
@@ -154,6 +160,4 @@ func GetRestaurantDish(id string)([]models.Dish,error){
 		return nil,err
 	}
 	return res,nil
-
-
 }

@@ -126,13 +126,4 @@ func GetSubAdminUsers(	w http.ResponseWriter, r *http.Request){
 	}
 	utils.RespondJSON(w,http.StatusOK,res)
 }
-func GetSubAdminRestaurant(w http.ResponseWriter, r *http.Request){
-	res,err := dbhelper.GetRetaurant()
-	if err!=nil{
 
-		utils.RespondJSON(w, http.StatusInternalServerError, err)
-		return
-	}
-	utils.RespondJSON(w,http.StatusOK,res)
-
-}

@@ -25,6 +25,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		utils.RespondError(w, http.StatusBadRequest, parseErr, "failed to parse request body")
 		return
 	}
+	//todo: use errors.new
 	if !body.Role.IsValid() {
 		utils.RespondError(w, http.StatusBadRequest, nil, "invalid role type provided")
 		return
@@ -145,9 +146,8 @@ func AddAddress(w http.ResponseWriter, r *http.Request) {
 func GetAll(w http.ResponseWriter, r *http.Request){
 	res ,err:= dbhelper.GetAllRestaurant()
 	if err != nil {
-
 		utils.RespondJSON(w, http.StatusOK, res)
-
+		return
 	}
 	utils.RespondJSON(w, http.StatusCreated, res)
 
@@ -162,13 +162,9 @@ func GetDish(w http.ResponseWriter, r *http.Request){
 	}
 	res,err := dbhelper.GetRestaurantDish(body.ID)
 	if err != nil {
-
 		utils.RespondJSON(w, http.StatusOK, res)
-
 	}
-	utils.RespondJSON(w, http.StatusCreated, res)
-
-
+	utils.RespondJSON(w, http.StatusOK, res)
 
 }
 

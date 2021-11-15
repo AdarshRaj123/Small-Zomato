@@ -28,6 +28,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+
+
+
 func UserContext(r *http.Request) *models.User {
 	if user, ok := r.Context().Value(userContext).(*models.User); ok && user != nil {
 		return user
@@ -35,7 +38,7 @@ func UserContext(r *http.Request) *models.User {
 	return nil
 }
 
-func ShouldHaveRole(role models.Role) func(http.Handler) http.Handler {
+func AdminCheck() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			user := UserContext(r)
@@ -44,7 +47,7 @@ func ShouldHaveRole(role models.Role) func(http.Handler) http.Handler {
 				return
 			}
 			for _, roleData := range user.Roles {
-				if roleData.Role == role {
+				if roleData.Role == models.RoleAdmin {
 					next.ServeHTTP(w, r)
 					return
 				}
@@ -53,4 +56,39 @@ func ShouldHaveRole(role models.Role) func(http.Handler) http.Handler {
 		})
 	}
 }
-
+func SubAdminCheck()func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			user := UserContext(r)
+			if user == nil || len(user.Roles) == 0 {
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+			for _, roleData := range user.Roles {
+				if roleData.Role == models.RoleSubAdmin{
+					next.ServeHTTP(w, r)
+					return
+				}
+			}
+			w.WriteHeader(http.StatusForbidden)
+		})
+	}
+}
+func UserCheck()func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			user := UserContext(r)
+			if user == nil || len(user.Roles) == 0 {
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+			for _, roleData := range user.Roles {
+				if roleData.Role == models.RoleUser{
+					next.ServeHTTP(w, r)
+					return
+				}
+			}
+			w.WriteHeader(http.StatusForbidden)
+		})
+	}
+}

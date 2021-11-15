@@ -37,7 +37,6 @@ func AddDish(w http.ResponseWriter, r *http.Request){
 	body := struct{
 		Name string `json:"name"`
 		 ID  string `json:"res_id"`
-
 	}{}
 
 	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {

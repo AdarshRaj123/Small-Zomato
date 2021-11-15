@@ -15,6 +15,5 @@ func subadminroutes(r chi.Router) {
 		subadmin.Post("/add-dish",handlers.AddSubAdminDish)
 		subadmin.Post("/add-user",handlers.AddSubAdminUser)
 		subadmin.Get("/get-users",handlers.GetSubAdminUsers)
-
 	})
 }
