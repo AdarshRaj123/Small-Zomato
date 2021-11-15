@@ -4,12 +4,10 @@ import (
 	"SmallZomato/database"
 	"SmallZomato/database/dbhelper"
 	"SmallZomato/middlewares"
-	"github.com/jmoiron/sqlx"
-	"net/http"
-	"time"
-
 	"SmallZomato/models"
 	"SmallZomato/utils"
+	"github.com/jmoiron/sqlx"
+	"net/http"
 )
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +47,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		utils.RespondError(w, http.StatusInternalServerError, hasErr, "failed to secure password")
 		return
 	}
-	sessionToken := utils.HashString(body.Email + time.Now().String())
+	//sessionToken := utils.HashString(body.Email + time.Now().String())
+	 sessionToken , _:= utils.GenerateJWT(body.Email,body.Role)
+
 	txErr := database.Tx(func(tx *sqlx.Tx) error {
 		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword,body.Role)
 		if saveErr != nil {
@@ -97,7 +97,13 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// create user session
-	sessionToken := utils.HashString(body.Email + time.Now().String())
+
+	 role,_ := dbhelper.GetUserRole(body.Email)
+	 sessionToken,_ := utils.GenerateJWT(body.Email,models.Role(role))
+
+	 //sessionToken := utils.HashString(body.Email + time.Now().String())
+
+
 	sessionErr := dbhelper.CreateUserSession(database.SmallZomato, userID, sessionToken)
 	if sessionErr != nil {
 		utils.RespondError(w, http.StatusInternalServerError, sessionErr, "failed to create user session")

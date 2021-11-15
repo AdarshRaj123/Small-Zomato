@@ -161,3 +161,27 @@ func GetRestaurantDish(id string)([]models.Dish,error){
 	}
 	return res,nil
 }
+func GetUserRole(pass string)(string,error){
+	//language = SQL
+	SQL :=`SELECT r.role FROM user_roles AS r JOIN user_profile AS p ON r.user_id = p.id WHERE p.email =$1`
+    var res string
+
+	err:=database.SmallZomato.Get(&res,SQL,pass)
+	if err!=nil{
+		fmt.Println(err)
+		return "",err
+	}
+	return res,nil
+
+}
+func GetUserDetail(email string)(*models.User,error){
+	SQL := `SELECT p.id,p.name,p.email,p.created_at FROM user_profile AS p JOIN user_roles AS r ON p.id = r.user_id WHERE p.email =$1`
+	var res models.User
+	err:=database.SmallZomato.Get(&res,SQL,email)
+	if err!=nil{
+		fmt.Println(err)
+		return nil,err
+	}
+	return &res,nil
+
+}

@@ -45,3 +45,8 @@ type Location struct{
 	Latitude string `json:"latitude" db:"latitude"`
 	Longitude string `json:"longitude" db:"longitude"`
 }
+type Token struct{
+	Role        string `json:"role"`
+	Email       string `json:"email"`
+	TokenString string `json:"token"`
+}
