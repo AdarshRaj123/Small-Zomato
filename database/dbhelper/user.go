@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 )
+
 func DeleteSessionToken(userID, token string) error {
 	// language=SQL
 	SQL := `DELETE FROM user_session WHERE user_id = $1 AND session_token = $2`
 	_, err := database.SmallZomato.Exec(SQL, userID, token)
 	return err
 }
-func IsUserExists(role models.Role,email string) (bool, error) {
+func IsUserExists(role models.Role, email string) (bool, error) {
 	// language=SQL
 	SQL := `SELECT u.id 
 			FROM user_profile AS u 
@@ -24,7 +25,7 @@ func IsUserExists(role models.Role,email string) (bool, error) {
 			u.archived_at IS NULL`
 
 	var id string
-	err := database.SmallZomato.Get(&id, SQL, role,email)
+	err := database.SmallZomato.Get(&id, SQL, role, email)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println(err)
 
@@ -42,11 +43,11 @@ func GetUserRoles(userID string) ([]models.UserRole, error) {
 	err := database.SmallZomato.Select(&roles, SQL, userID)
 	return roles, err
 }
-func CreateUser(db sqlx.Ext, name string, email string, password string,created models.Role) (string, error) {
+func CreateUser(db sqlx.Ext, name string, email string, password string, created models.Role, mobile_no string) (string, error) {
 	// language=SQL
-	SQL := `INSERT INTO user_profile(name, email, password,created_by) VALUES ($1, TRIM(LOWER($2)), $3,$4) RETURNING id`
+	SQL := `INSERT INTO user_profile(name, email, password,created_by,mobile_no) VALUES ($1, TRIM(LOWER($2)), $3,$4,$5) RETURNING id`
 	var userID string
-	if err := db.QueryRowx(SQL, name, email, password,created).Scan(&userID); err != nil {
+	if err := db.QueryRowx(SQL, name, email, password, created, mobile_no).Scan(&userID); err != nil {
 		return "", err
 	}
 	return userID, nil
@@ -89,19 +90,19 @@ func GetUserBySession(sessionToken string) (*models.User, error) {
 	user.Roles = roles
 	return &user, nil
 }
-func AddUserAddress(db sqlx.Ext,userID,latitude,longitude string)error{
+func AddUserAddress(db sqlx.Ext, userID, latitude, longitude string) error {
 	fmt.Println(userID)
 	//language SQL
 	SQL := `INSERT INTO user_address (user_id,latitude,longitude) VALUES($1,$2,$3)`
-	_,err := db.Exec(SQL,userID,latitude,longitude)
-	if err!=nil{
+	_, err := db.Exec(SQL, userID, latitude, longitude)
+	if err != nil {
 		return err
 	}
 	return nil
 }
 func GetUserIDByPassword(email, password string) (string, error) {
-// language=SQL
-SQL := `SELECT
+	// language=SQL
+	SQL := `SELECT
 				u.id,
        			u.password
        		FROM
@@ -109,79 +110,84 @@ SQL := `SELECT
 			WHERE
 				u.archived_at IS NULL
 				AND u.email = TRIM(LOWER($1))`
-var userID string
-var passwordHash string
-err := database.SmallZomato.QueryRowx(SQL, email).Scan(&userID, &passwordHash)
-if err != nil && err != sql.ErrNoRows {
-return "", err
-}
-if err == sql.ErrNoRows {
-return "", nil
-}
-// compare password
-if passwordErr := utils.CheckPassword(password, passwordHash); passwordErr != nil {
-return "", passwordErr
-}
-return userID, nil
+	var userID string
+	var passwordHash string
+	err := database.SmallZomato.QueryRowx(SQL, email).Scan(&userID, &passwordHash)
+	if err != nil && err != sql.ErrNoRows {
+		return "", err
+	}
+	if err == sql.ErrNoRows {
+		return "", nil
+	}
+	// compare password
+	if passwordErr := utils.CheckPassword(password, passwordHash); passwordErr != nil {
+		return "", passwordErr
+	}
+	return userID, nil
 }
 
-
-func AddAuthUserAddress(userID,latitude,longitude string)(map[string]string,error){
+func AddAuthUserAddress(userID, latitude, longitude string) (map[string]string, error) {
 	//language = SQL
 	SQL := `INSERT INTO user_address (user_id,latitude,longitude) VALUES($1,$2,$3)`
-	_,err := database.SmallZomato.Exec(SQL,userID,latitude,longitude)
+	_, err := database.SmallZomato.Exec(SQL, userID, latitude, longitude)
 	res := make(map[string]string)
-	if err!=nil{
-		res["error"]="Error in insertion of address"
-		return res,err
+	if err != nil {
+		res["error"] = "Error in insertion of address"
+		return res, err
 	}
-	res["success"]="Address Inserted Successfully"
-	return res,nil
+	res["success"] = "Address Inserted Successfully"
+	return res, nil
 
 }
-func GetAllRestaurant()([]models.Restaurant,error){
-	SQL := `SELECT name,latitude,longitude from restaurants`
-	res :=make([]models.Restaurant,0)
+func GetAllRestaurant() ([]models.Restaurant, error) {
+	SQL := "SELECT name,latitude,longitude from restaurants"
+	limit := SQL + "LIMIT all"
+	res := make([]models.Restaurant, 0)
 
-	err := database.SmallZomato.Select(&res,SQL)
+	err := database.SmallZomato.Select(&res, limit)
 	fmt.Println(res)
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	return res,nil
+	return res, nil
 
 }
-func GetRestaurantDish(id string)([]models.Dish,error){
+func GetRestaurantDish(id string) ([]models.Dish, error) {
 	SQL := `SELECT v.name FROM dishes AS v INNER JOIN restaurants as r ON v.res_id=r.id WHERE r.id =$1`
-	res := make([]models.Dish,0)
-	err:=database.SmallZomato.Select(&res,SQL,id)
-	if err!=nil{
+	res := make([]models.Dish, 0)
+	err := database.SmallZomato.Select(&res, SQL, id)
+	if err != nil {
 		fmt.Println(err)
-		return nil,err
+		return nil, err
 	}
-	return res,nil
+	return res, nil
 }
-func GetUserRole(pass string)(string,error){
+func GetUserRole(pass string) (string, error) {
 	//language = SQL
-	SQL :=`SELECT r.role FROM user_roles AS r JOIN user_profile AS p ON r.user_id = p.id WHERE p.email =$1`
-    var res string
+	SQL := `SELECT r.role FROM user_roles AS r JOIN user_profile AS p ON r.user_id = p.id WHERE p.email =$1`
+	var res string
 
-	err:=database.SmallZomato.Get(&res,SQL,pass)
-	if err!=nil{
+	err := database.SmallZomato.Get(&res, SQL, pass)
+	if err != nil {
 		fmt.Println(err)
-		return "",err
+		return "", err
 	}
-	return res,nil
+	return res, nil
 
 }
-func GetUserDetail(email string)(*models.User,error){
-	SQL := `SELECT p.id,p.name,p.email,p.created_at FROM user_profile AS p JOIN user_roles AS r ON p.id = r.user_id WHERE p.email =$1`
+func GetUserDetail(email string) (*models.User, error) {
+	SQL := `SELECT p.id,p.name,p.email,p.created_at  FROM user_profile AS p JOIN user_roles AS r ON p.id = r.user_id WHERE p.email =$1`
 	var res models.User
-	err:=database.SmallZomato.Get(&res,SQL,email)
-	if err!=nil{
+	err := database.SmallZomato.Get(&res, SQL, email)
+	if err != nil {
 		fmt.Println(err)
-		return nil,err
+		return nil, err
 	}
-	return &res,nil
+	roles, roleErr := GetUserRoles(res.ID)
+	if roleErr != nil {
+		return nil, roleErr
+	}
+	res.Roles = roles
+	return &res, nil
 
 }

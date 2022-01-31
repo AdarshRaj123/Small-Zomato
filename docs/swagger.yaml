@@ -1,0 +1,344 @@
+basePath: /
+definitions:
+  RegisterUser:
+    properties:
+      email:
+        description: |-
+          Email of the user
+          Required: true
+        type: string
+      latitude:
+        description: Latitude of the user
+        type: string
+      longitude:
+        description: |-
+          Longitude of the user
+          Required: true
+        type: string
+      mobile_no:
+        description: |-
+          MobileNo of the user
+          Required: true
+        type: string
+      name:
+        description: |-
+          Name of the user
+          Required:true
+        type: string
+      password:
+        description: |-
+          Password of the user
+          Required: true
+        type: string
+      role:
+        description: |-
+          Role of the user
+          Required: true
+        type: string
+    type: object
+  RequestErr:
+    properties:
+      developerInfo:
+        description: |-
+          DeveloperInfo will contain additional developer info related with error
+          Example: Invalid email format
+        type: string
+      error:
+        description: |-
+          Err contains the error or exception message
+          Example: validation on email failed with error invalid email format
+        type: string
+      id:
+        description: |-
+          ID for the request
+          Example: 8YeCqPXmM
+        type: string
+      isClientError:
+        description: IsClientError will be false if some internal server error occurred
+        type: boolean
+      messageToUser:
+        description: |-
+          MessageToUser will contain error message
+          Example: Invalid Email
+        type: string
+      statusCode:
+        description: |-
+          StatusCode will contain the status code for the error
+          Example: 500
+        type: integer
+    type: object
+  UserLocation:
+    properties:
+      latitude:
+        description: |-
+          Latitude is the latitude of the user
+          Required: true
+        type: string
+      longitude:
+        description: |-
+          Longitude is the longitude of the user
+          Required: true
+        type: string
+    type: object
+  models.User:
+    properties:
+      createdAt:
+        description: |-
+          CreatedAt of the user
+          Required: true
+        type: string
+      email:
+        description: |-
+          Email of the user
+          Required: true
+        type: string
+      id:
+        description: |-
+          ID of the user
+          Required: true
+        type: string
+      name:
+        description: |-
+          Name of the user
+          Required: true
+        type: string
+      roles:
+        description: |-
+          Roles of the user
+          Required: true
+        items:
+          $ref: '#/definitions/models.UserRole'
+        type: array
+    type: object
+  models.UserDetail:
+    properties:
+      created_at:
+        description: |-
+          CreatedAt is when the user was created
+          Required: false
+        type: string
+      email:
+        description: |-
+          Email of the user
+          Required: true
+        type: string
+      mobile_no:
+        description: |-
+          MobileNo is the mobile no of the user
+          Required: true
+        type: string
+      name:
+        description: |-
+          Name of the user
+          Required:true
+        type: string
+    type: object
+  models.UserLoginRequest:
+    properties:
+      email:
+        description: |-
+          Email address of the user
+          Required: true
+          Example: test@someemail.com
+        type: string
+      password:
+        description: |-
+          Password for the user ac
+          Required: true
+          Example: some-password
+        type: string
+    type: object
+  models.UserLoginResponse:
+    properties:
+      token:
+        description: |-
+          Token for the user session, should be sent in x-api-key for the authorized requests
+          Example: 8e77e71abe427ced1c93d883aeeddfa57ce39b787f229caaf176fdd71353f3466d340a2cdb5a219c429c53ad37f2f144c7ce01b985b6b33e397c4b8fd1433cc3
+        type: string
+    type: object
+  models.UserRole:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      role:
+        type: string
+      userId:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: This is a sample server of Small Zomato .
+  title: Small Zomato
+  version: "1.0"
+paths:
+  /small-zomato/internal/admin/users:
+    get:
+      description: it returns all the users of the restaurants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserDetail'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/RequestErr'
+      security:
+      - ApiKeyAuth: []
+      summary: Gets All the Users
+      tags:
+      - small-zomato/admin/users
+  /small-zomato/login:
+    post:
+      consumes:
+      - application/json
+      description: Login API takes in the email and password and returns the session
+        token if login is valid
+      parameters:
+      - description: Login request
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/RequestErr'
+      summary: Allow the user (non admin) to log into the system
+      tags:
+      - v1/login
+  /small-zomato/register:
+    post:
+      consumes:
+      - application/json
+      description: takes email,password etc and creates the user and sends the session
+        token
+      parameters:
+      - description: register request
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/RequestErr'
+      summary: Creates A user
+      tags:
+      - small-zomato/registeruser
+  /small-zomato/user/address:
+    post:
+      consumes:
+      - application/json
+      description: takes the latitude and longitude of the users as address
+      parameters:
+      - description: users location
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/UserLocation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UserLocation'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/RequestErr'
+      security:
+      - ApiKeyAuth: []
+      summary: it adds the address of the user
+      tags:
+      - Small-Zomato/add-address
+  /small-zomato/user/info:
+    post:
+      description: the details of the user is returned
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/RequestErr'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/RequestErr'
+      security:
+      - ApiKeyAuth: []
+      summary: Gets the details of the user
+      tags:
+      - small-zomato/getUserInfo
+schemes:
+- http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-api-key
+    type: apiKey
+swagger: "2.0"

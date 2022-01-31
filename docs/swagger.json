@@ -1,0 +1,435 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server of Small Zomato .",
+        "title": "Small Zomato",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "paths": {
+        "/small-zomato/internal/admin/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "it returns all the users of the restaurants",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "small-zomato/admin/users"
+                ],
+                "summary": "Gets All the Users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserDetail"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/small-zomato/login": {
+            "post": {
+                "description": "Login API takes in the email and password and returns the session token if login is valid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "v1/login"
+                ],
+                "summary": "Allow the user (non admin) to log into the system",
+                "parameters": [
+                    {
+                        "description": "Login request",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserLoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/small-zomato/register": {
+            "post": {
+                "description": "takes email,password etc and creates the user and sends the session token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "small-zomato/registeruser"
+                ],
+                "summary": "Creates A user",
+                "parameters": [
+                    {
+                        "description": "register request",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RegisterUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserLoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/small-zomato/user/address": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "takes the latitude and longitude of the users as address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Small-Zomato/add-address"
+                ],
+                "summary": "it adds the address of the user",
+                "parameters": [
+                    {
+                        "description": "users location",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UserLocation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UserLocation"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    }
+                }
+            }
+        },
+        "/small-zomato/user/info": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "the details of the user is returned",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "small-zomato/getUserInfo"
+                ],
+                "summary": "Gets the details of the user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/RequestErr"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "RegisterUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email of the user\nRequired: true",
+                    "type": "string"
+                },
+                "latitude": {
+                    "description": "Latitude of the user",
+                    "type": "string"
+                },
+                "longitude": {
+                    "description": "Longitude of the user\nRequired: true",
+                    "type": "string"
+                },
+                "mobile_no": {
+                    "description": "MobileNo of the user\nRequired: true",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name of the user\nRequired:true",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password of the user\nRequired: true",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Role of the user\nRequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "RequestErr": {
+            "type": "object",
+            "properties": {
+                "developerInfo": {
+                    "description": "DeveloperInfo will contain additional developer info related with error\nExample: Invalid email format",
+                    "type": "string"
+                },
+                "error": {
+                    "description": "Err contains the error or exception message\nExample: validation on email failed with error invalid email format",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID for the request\nExample: 8YeCqPXmM",
+                    "type": "string"
+                },
+                "isClientError": {
+                    "description": "IsClientError will be false if some internal server error occurred",
+                    "type": "boolean"
+                },
+                "messageToUser": {
+                    "description": "MessageToUser will contain error message\nExample: Invalid Email",
+                    "type": "string"
+                },
+                "statusCode": {
+                    "description": "StatusCode will contain the status code for the error\nExample: 500",
+                    "type": "integer"
+                }
+            }
+        },
+        "UserLocation": {
+            "type": "object",
+            "properties": {
+                "latitude": {
+                    "description": "Latitude is the latitude of the user\nRequired: true",
+                    "type": "string"
+                },
+                "longitude": {
+                    "description": "Longitude is the longitude of the user\nRequired: true",
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "description": "CreatedAt of the user\nRequired: true",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email of the user\nRequired: true",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the user\nRequired: true",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name of the user\nRequired: true",
+                    "type": "string"
+                },
+                "roles": {
+                    "description": "Roles of the user\nRequired: true",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserRole"
+                    }
+                }
+            }
+        },
+        "models.UserDetail": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt is when the user was created\nRequired: false",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Email of the user\nRequired: true",
+                    "type": "string"
+                },
+                "mobile_no": {
+                    "description": "MobileNo is the mobile no of the user\nRequired: true",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name of the user\nRequired:true",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserLoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email address of the user\nRequired: true\nExample: test@someemail.com",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password for the user ac\nRequired: true\nExample: some-password",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserLoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "description": "Token for the user session, should be sent in x-api-key for the authorized requests\nExample: 8e77e71abe427ced1c93d883aeeddfa57ce39b787f229caaf176fdd71353f3466d340a2cdb5a219c429c53ad37f2f144c7ce01b985b6b33e397c4b8fd1433cc3",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserRole": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "x-api-key",
+            "in": "header"
+        }
+    }
+}

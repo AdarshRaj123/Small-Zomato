@@ -1,4 +1,4 @@
-CREATE TABLE user_profile(
+CREATE TABLE IF NOT EXISTS user_profile(
                              id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                              name TEXT NOT NULL,
                              email TEXT NOT NULL,

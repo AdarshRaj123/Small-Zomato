@@ -41,7 +41,7 @@ func AddDishToRes(name,id string)(map[string]string ,error){
 }
 func GetAllUser()([]models.UserDetail,error){
 	//language SQL
-	SQL := `SELECT name,email,created_at FROM user_profile`
+	SQL := `SELECT name,email,created_at,mobile_no FROM user_profile`
 	res := make([]models.UserDetail,0)
 	err:=database.SmallZomato.Select(&res,SQL)
 
@@ -52,16 +52,16 @@ func GetAllUser()([]models.UserDetail,error){
 	return res,nil
 
 }
-func CalculateDistance(id,latitude,longitude string)float64{
+func CalculateDistance(id,latitude,longitude string)(float64,error){
 	//language SQL
 	SQL:=`SELECT latitude,longitude FROM user_address WHERE user_id =$1`
 	var data models.Location
 	err :=database.SmallZomato.Get(&data,SQL,id)
 	if err!=nil{
-
+        return 0 ,err
 	}
 	  dist := utils.GetDistanceFromLat(data,latitude,longitude)
 
-	  return dist
+	  return dist,nil
 
 }

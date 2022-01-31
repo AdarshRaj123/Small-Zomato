@@ -28,7 +28,7 @@ func AddSubAdminRestaurant(w http.ResponseWriter, r *http.Request){
 		utils.RespondJSON(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.RespondJSON(w,http.StatusOK,res)
+	utils.RespondJSON(w,http.StatusCreated,res)
 
 
 }
@@ -49,7 +49,7 @@ func AddSubAdminDish(w http.ResponseWriter, r *http.Request){
 		utils.RespondJSON(w, http.StatusInternalServerError, err)
 		return
 	}
-	utils.RespondJSON(w,http.StatusOK,res)
+	utils.RespondJSON(w,http.StatusCreated,res)
 
 
 }
@@ -60,6 +60,7 @@ func AddSubAdminUser(w http.ResponseWriter, r *http.Request){
 		Password string      `json:"password"`
 		Latitude string     `json:"latitude"`
 		Longitude string     `json:"longitude"`
+		MobileNo string        `json:"mobile_no"`
 		Role     models.Role `json:"role"`
 	}{}
 	if parseErr := utils.ParseBody(r.Body, &body); parseErr != nil {
@@ -91,7 +92,7 @@ func AddSubAdminUser(w http.ResponseWriter, r *http.Request){
 	}
 
 	txErr := database.Tx(func(tx *sqlx.Tx) error {
-		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword,"subadmin")
+		userID, saveErr := dbhelper.CreateUser(tx, body.Name, body.Email, hashedPassword,"subadmin",body.MobileNo)
 		if saveErr != nil {
 			return saveErr
 		}
